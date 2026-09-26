@@ -34,22 +34,28 @@ def base_layout(
     fig: go.Figure,
     title: str,
     y_title: str,
-    height: int = 340,
+    height: int = 300,
     *,
     annotations: list[dict[str, object]] | None = None,
 ) -> go.Figure:
     palette = _palette()
     fig.update_layout(
         template=str(palette["template"]),
-        title={"text": title, "x": 0, "font": {"size": 16, "color": str(palette["font"])}},
+        title={"text": title, "x": 0, "font": {"size": 15, "color": str(palette["font"])}},
         yaxis_title=y_title,
         xaxis_title=None,
         height=height,
-        margin={"l": 48, "r": 16, "t": 52, "b": 32},
+        autosize=True,
+        margin={"l": 44, "r": 12, "t": 48, "b": 28},
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
-        legend={"orientation": "h", "y": 1.14},
-        font={"color": str(palette["font"]), "family": "IBM Plex Sans, sans-serif"},
+        legend={
+            "orientation": "h",
+            "y": 1.16,
+            "x": 0,
+            "font": {"size": 11},
+        },
+        font={"color": str(palette["font"]), "family": "IBM Plex Sans, sans-serif", "size": 12},
         annotations=annotations or [],
         hovermode="x unified",
     )
@@ -144,4 +150,13 @@ def spread_series(
 
 
 def plot(fig: go.Figure) -> None:
-    st.plotly_chart(fig, width="stretch")
+    st.plotly_chart(
+        fig,
+        width="stretch",
+        config={
+            "responsive": True,
+            "displayModeBar": True,
+            "displaylogo": False,
+            "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+        },
+    )

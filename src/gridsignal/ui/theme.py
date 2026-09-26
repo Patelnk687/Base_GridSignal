@@ -59,8 +59,23 @@ h1, h2, h3, h4 { color: #10233f !important; letter-spacing: -0.02em; }
 
 div[data-testid="stAlert"] { color: #152033 !important; }
 
-.gs-brand { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: #10233f !important; margin-bottom: 0.15rem; }
+.gs-brand {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
+  color: #0f6e56 !important; margin-bottom: 0.2rem; line-height: 1.1;
+}
 .gs-track { color: #4b5d73 !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; }
+.gs-topbar {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.55rem 1rem;
+  margin: 0 0 0.85rem 0; padding-bottom: 0.7rem;
+  border-bottom: 1px solid #d7e0ea;
+}
+.gs-topbar-name {
+  font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+  color: #0f6e56 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+.gs-topbar-tag {
+  color: #4b5d73 !important; font-size: 0.9rem; font-weight: 500;
+}
 .gs-kicker { color: #5b6b7c !important; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; margin-bottom: 0.35rem; }
 .gs-badge {
   display: inline-block; padding: 0.16rem 0.55rem; border-radius: 999px;
@@ -95,11 +110,18 @@ div[data-testid="stAlert"] { color: #152033 !important; }
 }
 .gs-hero {
   background: linear-gradient(135deg, #0f6e56 0%, #147a8c 55%, #1d4ed8 100%);
-  border-radius: 18px; padding: 1.15rem 1.35rem; margin: 0.35rem 0 1rem 0;
+  border-radius: 18px; padding: 1.25rem 1.4rem; margin: 0.35rem 0 1rem 0;
   color: #fff !important; box-shadow: 0 12px 40px rgba(15,110,86,0.22);
 }
-.gs-hero h1 { color: #fff !important; font-size: 1.65rem; margin: 0 0 0.35rem 0; }
-.gs-hero p { color: rgba(255,255,255,0.92) !important; margin: 0; font-size: 0.98rem; line-height: 1.45; }
+.gs-hero-brand {
+  color: #fff !important; font-size: 2.35rem; font-weight: 700;
+  letter-spacing: -0.045em; line-height: 1; margin: 0 0 0.45rem 0;
+}
+.gs-hero h1 {
+  color: rgba(255,255,255,0.95) !important; font-size: 1.2rem; font-weight: 600;
+  margin: 0 0 0.4rem 0; letter-spacing: -0.01em; line-height: 1.3;
+}
+.gs-hero p { color: rgba(255,255,255,0.9) !important; margin: 0; font-size: 0.95rem; line-height: 1.45; }
 .gs-insight-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
@@ -135,6 +157,48 @@ div[data-testid="stMetric"] {
   border-radius: 16px;
   padding: 0.75rem 0.9rem;
   box-shadow: 0 8px 24px rgba(15,110,86,0.06);
+}
+
+/* Phone / narrow tablet */
+@media (max-width: 768px) {
+  .block-container {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+    padding-top: 0.65rem !important;
+    max-width: 100% !important;
+  }
+  .gs-brand { font-size: 1.4rem !important; }
+  .gs-topbar-name { font-size: 1.65rem !important; }
+  .gs-topbar-tag { font-size: 0.8rem !important; }
+  .gs-hero { padding: 0.9rem 1rem !important; border-radius: 14px !important; }
+  .gs-hero-brand { font-size: 1.85rem !important; }
+  .gs-hero h1 { font-size: 1.05rem !important; }
+  .gs-hero p { font-size: 0.88rem !important; }
+  .gs-insight-grid { grid-template-columns: 1fr !important; gap: 0.55rem !important; }
+  .gs-why, .gs-chart-note { padding: 0.65rem 0.75rem !important; font-size: 0.84rem !important; }
+  .gs-step { font-size: 0.72rem !important; padding: 0.22rem 0.55rem !important; }
+  div[data-testid="stHorizontalBlock"] {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+  }
+  div[data-testid="stMetric"] { padding: 0.55rem 0.7rem !important; margin-bottom: 0.25rem; }
+  [data-testid="stMetricValue"] { font-size: 1.35rem !important; }
+  div[data-testid="stDataFrame"],
+  div[data-testid="stTable"],
+  .gs-scroll-table {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .gs-scroll-table table { min-width: 560px; }
+  .js-plotly-plot .plotly .main-svg { max-width: 100% !important; }
+  h1 { font-size: 1.45rem !important; }
+  h2, h3 { font-size: 1.15rem !important; }
 }
 </style>
 """
@@ -205,8 +269,23 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
   color: #e7ecf5 !important;
 }
 
-.gs-brand { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: #f3f6fb !important; margin-bottom: 0.15rem; }
+.gs-brand {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
+  color: #5eead4 !important; margin-bottom: 0.2rem; line-height: 1.1;
+}
 .gs-track { color: #a8b3c7 !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; }
+.gs-topbar {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.55rem 1rem;
+  margin: 0 0 0.85rem 0; padding-bottom: 0.7rem;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+.gs-topbar-name {
+  font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+  color: #5eead4 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+.gs-topbar-tag {
+  color: #a8b3c7 !important; font-size: 0.9rem; font-weight: 500;
+}
 .gs-kicker { color: #a8b3c7 !important; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; margin-bottom: 0.35rem; }
 .gs-badge {
   display: inline-block; padding: 0.16rem 0.55rem; border-radius: 999px;
@@ -242,12 +321,19 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
 }
 .gs-hero {
   background: linear-gradient(135deg, #0d3f34 0%, #134e4a 40%, #1e3a5f 100%);
-  border-radius: 18px; padding: 1.15rem 1.35rem; margin: 0.35rem 0 1rem 0;
+  border-radius: 18px; padding: 1.25rem 1.4rem; margin: 0.35rem 0 1rem 0;
   color: #fff !important; border: 1px solid rgba(45,212,191,0.25);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35);
 }
-.gs-hero h1 { color: #ecfeff !important; font-size: 1.65rem; margin: 0 0 0.35rem 0; }
-.gs-hero p { color: rgba(236,254,255,0.9) !important; margin: 0; font-size: 0.98rem; line-height: 1.45; }
+.gs-hero-brand {
+  color: #ecfeff !important; font-size: 2.35rem; font-weight: 700;
+  letter-spacing: -0.045em; line-height: 1; margin: 0 0 0.45rem 0;
+}
+.gs-hero h1 {
+  color: rgba(236,254,255,0.95) !important; font-size: 1.2rem; font-weight: 600;
+  margin: 0 0 0.4rem 0; letter-spacing: -0.01em; line-height: 1.3;
+}
+.gs-hero p { color: rgba(236,254,255,0.88) !important; margin: 0; font-size: 0.95rem; line-height: 1.45; }
 .gs-insight-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
@@ -278,6 +364,48 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
 .gs-sev-high { background: #4c0519; color: #fda4af !important; }
 .gs-sev-moderate { background: #431407; color: #fdba74 !important; }
 .gs-sev-low { background: #0c4a6e; color: #7dd3fc !important; }
+
+/* Phone / narrow tablet */
+@media (max-width: 768px) {
+  .block-container {
+    padding-left: 0.85rem !important;
+    padding-right: 0.85rem !important;
+    padding-top: 0.65rem !important;
+    max-width: 100% !important;
+  }
+  .gs-brand { font-size: 1.4rem !important; }
+  .gs-topbar-name { font-size: 1.65rem !important; }
+  .gs-topbar-tag { font-size: 0.8rem !important; }
+  .gs-hero { padding: 0.9rem 1rem !important; border-radius: 14px !important; }
+  .gs-hero-brand { font-size: 1.85rem !important; }
+  .gs-hero h1 { font-size: 1.05rem !important; }
+  .gs-hero p { font-size: 0.88rem !important; }
+  .gs-insight-grid { grid-template-columns: 1fr !important; gap: 0.55rem !important; }
+  .gs-why, .gs-chart-note { padding: 0.65rem 0.75rem !important; font-size: 0.84rem !important; }
+  .gs-step { font-size: 0.72rem !important; padding: 0.22rem 0.55rem !important; }
+  div[data-testid="stHorizontalBlock"] {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+  div[data-testid="stHorizontalBlock"] > div[data-testid="stColumn"] {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+    min-width: 100% !important;
+  }
+  div[data-testid="stMetric"] { padding: 0.55rem 0.7rem !important; margin-bottom: 0.25rem; }
+  [data-testid="stMetricValue"] { font-size: 1.35rem !important; }
+  div[data-testid="stDataFrame"],
+  div[data-testid="stTable"],
+  .gs-scroll-table {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .gs-scroll-table table { min-width: 560px; }
+  .js-plotly-plot .plotly .main-svg { max-width: 100% !important; }
+  h1 { font-size: 1.45rem !important; }
+  h2, h3 { font-size: 1.15rem !important; }
+}
 </style>
 """
 
@@ -314,6 +442,17 @@ def render_sidebar_brand() -> None:
     )
 
 
+def render_main_brand() -> None:
+    """Always-visible product name in the main pane (sidebar is collapsed on phones)."""
+    st.markdown(
+        '<div class="gs-topbar">'
+        '<div class="gs-topbar-name">GridSignal</div>'
+        '<div class="gs-topbar-tag">Open Grid Data · ERCOT anomalies, evidence &amp; virtual fleet</div>'
+        "</div>",
+        unsafe_allow_html=True,
+    )
+
+
 def chart_note(title: str, body: str) -> None:
     """Short explainer under a chart — what the axes are and what to look for."""
     st.markdown(
@@ -339,9 +478,11 @@ def pipeline_strip() -> None:
     )
 
 
-def hero_block(title: str, subtitle: str) -> None:
+def hero_block(title: str, subtitle: str, *, brand: str = "GridSignal") -> None:
     st.markdown(
-        f'<div class="gs-hero"><h1>{title}</h1><p>{subtitle}</p></div>',
+        f'<div class="gs-hero">'
+        f'<div class="gs-hero-brand">{brand}</div>'
+        f"<h1>{title}</h1><p>{subtitle}</p></div>",
         unsafe_allow_html=True,
     )
 
@@ -377,7 +518,7 @@ def mode_banner(*, synthetic: bool, scenario_id: str, text: str) -> None:
         badge = "LIVE ERCOT"
     badge_class = "gs-badge" if synthetic else "gs-badge gs-badge-live"
     st.markdown(
-        f'<div class="gs-kicker">GridSignal <span class="{badge_class}">{badge}</span> · {scenario_id}</div>',
+        f'<div class="gs-kicker"><span class="{badge_class}">{badge}</span> · {scenario_id}</div>',
         unsafe_allow_html=True,
     )
     st.caption(text)

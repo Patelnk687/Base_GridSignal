@@ -18,7 +18,7 @@ def render() -> None:
         scenario_id=result.scenario_id,
         text="Battery behavior is simulated. Nothing is dispatched to the ERCOT grid.",
     )
-    st.title("Battery lab")
+    st.subheader("Battery lab")
     why_block(
         "<strong>What most people miss:</strong> a price spike chart does not tell you whether a "
         "physically constrained fleet could have discharged into it. Compare <em>idle</em> (do nothing), "

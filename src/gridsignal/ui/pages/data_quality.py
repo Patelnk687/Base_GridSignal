@@ -21,7 +21,7 @@ def render() -> None:
         scenario_id=result.scenario_id,
         text="Credential values are not displayed.",
     )
-    st.title("Data quality")
+    st.subheader("Data quality")
     why_block(
         "<strong>Use it tomorrow:</strong> refresh once with "
         "<code>python -m gridsignal.tools.refresh_live_snapshot</code>, "

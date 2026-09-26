@@ -17,7 +17,7 @@ def render() -> None:
         scenario_id=result.scenario_id,
         text="Anomaly baselines use only earlier intervals. Correlation is not causation.",
     )
-    st.title("Anomaly explorer")
+    st.subheader("Anomaly explorer")
     why_block(
         "<strong>Non-obvious output:</strong> most ERCOT viewers see a spike. GridSignal names the "
         "series, the past-only baseline, the deviation, and aligned evidence (load/wind/price) with "

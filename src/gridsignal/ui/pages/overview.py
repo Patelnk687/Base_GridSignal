@@ -173,6 +173,7 @@ def render() -> None:
             "</tr>"
         )
     st.markdown(
+        "<div class='gs-scroll-table'>"
         "<table style='width:100%; border-collapse:collapse; font-size:0.9rem;'>"
         "<thead><tr>"
         "<th align='left'>Time</th><th align='left'>Location</th><th align='left'>Category</th>"
@@ -180,6 +181,6 @@ def render() -> None:
         "<th align='right'>Baseline</th><th align='right'>Deviation</th>"
         "</tr></thead><tbody>"
         + "".join(html_rows)
-        + "</tbody></table>",
+        + "</tbody></table></div>",
         unsafe_allow_html=True,
     )

@@ -24,7 +24,7 @@ def render() -> None:
             else f"Replaying cached live window {result.scenario_id}."
         ),
     )
-    st.title("Replay")
+    st.subheader("Replay")
     why_block(
         "<strong>Usability for Base tomorrow:</strong> scrub to any hour and only see what was "
         "knowable then. Anomaly baselines never peek ahead — so this is a decision clock, not a "

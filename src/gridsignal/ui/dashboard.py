@@ -5,7 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from gridsignal.ui.pages import anomalies, battery_lab, data_quality, overview, replay
-from gridsignal.ui.theme import appearance_toggle, apply_theme, render_sidebar_brand
+from gridsignal.ui.theme import appearance_toggle, apply_theme, render_main_brand, render_sidebar_brand
 from gridsignal.ui.state import purge_stale_widget_keys
 
 
@@ -14,7 +14,8 @@ def main() -> None:
         page_title="GridSignal",
         page_icon="⚡",
         layout="wide",
-        initial_sidebar_state="expanded",
+        # Collapses sidebar on phones so the main charts get the first viewport.
+        initial_sidebar_state="auto",
     )
     purge_stale_widget_keys()
     # Toggle first so apply_theme reads the chosen appearance.
@@ -31,6 +32,7 @@ def main() -> None:
         "Offline: GRIDSIGNAL_DATA_MODE=snapshot after "
         "`python -m gridsignal.tools.refresh_live_snapshot`."
     )
+    render_main_brand()
     navigation = st.navigation(
         [
             st.Page(overview.render, title="Overview", url_path="overview", default=True),

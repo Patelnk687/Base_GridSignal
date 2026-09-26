@@ -4,6 +4,8 @@ ERCOT grid intelligence and a virtual home-battery fleet, built for the Base AI 
 
 GridSignal loads grid measurements, flags unusual intervals with a past-only baseline, explains them from the numbers that were actually present, and simulates how a configurable battery fleet could have charged or discharged. The simulation is analytical. It does not control hardware, submit bids, or change ERCOT prices.
 
+**Live demo:** [Streamlit Cloud](https://basegridsignaltabreadme-ov-file-mobbixbp7vrkxx7jckakjd.streamlit.app/) · short write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
+
 ERCOT does not endorse this project. Public data remains subject to [ERCOT's terms](https://www.ercot.com/help/terms).
 
 ## Features
