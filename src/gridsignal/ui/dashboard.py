@@ -6,7 +6,7 @@ import streamlit as st
 
 from gridsignal.ui.pages import anomalies, battery_lab, data_quality, overview, replay
 from gridsignal.ui.theme import appearance_toggle, apply_theme, render_main_brand, render_sidebar_brand
-from gridsignal.ui.state import purge_stale_widget_keys
+from gridsignal.ui.state import clear_pipeline_cache, purge_stale_widget_keys
 
 
 def main() -> None:
@@ -32,6 +32,9 @@ def main() -> None:
         "Offline: GRIDSIGNAL_DATA_MODE=snapshot after "
         "`python -m gridsignal.tools.refresh_live_snapshot`."
     )
+    if st.sidebar.button("Reload data", help="Clear cached pipeline and reload demo/snapshot/live."):
+        clear_pipeline_cache()
+        st.rerun()
     render_main_brand()
     navigation = st.navigation(
         [

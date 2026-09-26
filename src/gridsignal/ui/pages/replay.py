@@ -48,7 +48,7 @@ def render() -> None:
     load = pivot_series(observations, "load_mw_total", "TOTAL").rename("load_mw")
     wind = pivot_series(observations, "wind_gen_mw", "SYSTEM").rename("wind_mw")
     price = pivot_series(observations, "spp_usd_per_mwh", "HB_HUBAVG").rename("price")
-    chart = pd.concat([load, wind, price], axis=1).reset_index(names="timestamp_utc")
+    chart = pd.concat([load, wind, price], axis=1).rename_axis("timestamp_utc").reset_index()
     plot(
         time_series(
             chart,

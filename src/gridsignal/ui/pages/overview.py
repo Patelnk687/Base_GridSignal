@@ -80,7 +80,7 @@ def render() -> None:
     load = pivot_series(result.observations, "load_mw_total", "TOTAL").rename("load_mw")
     wind = pivot_series(result.observations, "wind_gen_mw", "SYSTEM").rename("wind_mw")
     solar = pivot_series(result.observations, "solar_gen_mw", "SYSTEM").rename("solar_mw")
-    grid = pd.concat([load, wind, solar], axis=1).reset_index(names="timestamp_utc")
+    grid = pd.concat([load, wind, solar], axis=1).rename_axis("timestamp_utc").reset_index()
     left, right = st.columns(2)
     peak_x = None if peak is None else peak["timestamp_utc"]
     with left:
@@ -103,7 +103,7 @@ def render() -> None:
     hub = pivot_series(result.observations, "spp_usd_per_mwh", "HB_HUBAVG").rename("hub")
     houston = pivot_series(result.observations, "spp_usd_per_mwh", "LZ_HOUSTON").rename("houston")
     west = pivot_series(result.observations, "spp_usd_per_mwh", "LZ_WEST").rename("west")
-    prices = pd.concat([hub, houston, west], axis=1).reset_index(names="timestamp_utc")
+    prices = pd.concat([hub, houston, west], axis=1).rename_axis("timestamp_utc").reset_index()
     with right:
         plot(
             time_series(
@@ -122,7 +122,13 @@ def render() -> None:
         )
 
     if not hub.empty and not houston.empty:
-        spread = (houston.reindex(hub.index) - hub).dropna().rename("spread").reset_index(names="timestamp_utc")
+        spread = (
+            (houston.reindex(hub.index) - hub)
+            .dropna()
+            .rename("spread")
+            .rename_axis("timestamp_utc")
+            .reset_index()
+        )
         plot(spread_series(spread, "spread", "Houston − hub spread (congestion tell)", marker_x=peak_x))
         chart_note(
             "What this shows:",

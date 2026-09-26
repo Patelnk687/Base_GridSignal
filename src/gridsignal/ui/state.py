@@ -39,6 +39,12 @@ def get_result() -> PipelineResult:
     return st.session_state["gs_pipeline_result"]
 
 
+def clear_pipeline_cache() -> None:
+    """Force the next page render to reload demo / snapshot / live data."""
+    st.session_state.pop("gs_pipeline_result", None)
+    st.session_state.pop("gs_settings", None)
+
+
 def rerun(fleet: FleetSpec) -> PipelineResult:
     """Rebuild strategies for a new fleet without re-fetching ERCOT."""
     previous = st.session_state.get("gs_pipeline_result")
