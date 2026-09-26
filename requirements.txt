@@ -1,3 +1,6 @@
+# Install the local package (src/gridsignal). Required on Streamlit Community Cloud.
+-e .
+
 numpy>=2.0
 pandas>=2.2
 plotly>=5.24
@@ -7,5 +10,4 @@ python-dotenv>=1.0
 requests>=2.32
 scikit-learn>=1.5
 streamlit>=1.39
-pytest>=8.3
-ruff>=0.6
+setuptools>=68
