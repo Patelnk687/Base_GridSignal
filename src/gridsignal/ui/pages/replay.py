@@ -1,4 +1,4 @@
-"""Step through the bundled scenario."""
+"""Step through the live or synthetic window."""
 
 from __future__ import annotations
 
@@ -7,18 +7,29 @@ import streamlit as st
 
 from gridsignal.analytics.features import pivot_series
 from gridsignal.services.historical_replay import slice_as_of
-from gridsignal.ui.charts import time_series
+from gridsignal.ui.charts import plot, time_series
 from gridsignal.ui.state import get_result
-from gridsignal.ui.theme import synthetic_banner
+from gridsignal.ui.theme import chart_note, mode_banner, why_block
 
 
 def render() -> None:
     result = get_result()
-    synthetic_banner(
-        f"{result.scenario_id} is a constructed interval. "
-        "A verified ERCOT replay appears here only after a cached pull."
+    mode_banner(
+        synthetic=result.synthetic,
+        scenario_id=result.scenario_id,
+        text=(
+            f"{result.scenario_id} is a constructed interval. "
+            "A verified ERCOT replay appears here only after a cached pull."
+            if result.synthetic
+            else f"Replaying cached live window {result.scenario_id}."
+        ),
     )
     st.title("Replay")
+    why_block(
+        "<strong>Usability for Base tomorrow:</strong> scrub to any hour and only see what was "
+        "knowable then. Anomaly baselines never peek ahead — so this is a decision clock, not a "
+        "hindsight chart dump."
+    )
     stamps = pd.to_datetime(result.stress["timestamp_utc"], utc=True)
     if stamps.empty:
         st.info("Nothing to replay.")
@@ -38,25 +49,30 @@ def render() -> None:
     wind = pivot_series(observations, "wind_gen_mw", "SYSTEM").rename("wind_mw")
     price = pivot_series(observations, "spp_usd_per_mwh", "HB_HUBAVG").rename("price")
     chart = pd.concat([load, wind, price], axis=1).reset_index(names="timestamp_utc")
-    st.plotly_chart(
+    plot(
         time_series(
             chart,
             {"load_mw": "Load MW", "wind_mw": "Wind MW", "price": "HB_HUBAVG"},
             "Grid through this interval",
             "mixed units",
-        ),
-        use_container_width=True,
+        )
     )
-    st.caption("Load and wind are MW. The price trace is USD/MWh on the same axis for timing, not for a shared scale.")
+    chart_note(
+        "What this shows:",
+        "Everything through the selected hour only. Load and wind are MW; HB_HUBAVG is $/MWh on the "
+        "same axis so you can see timing (not a shared physical scale). If price spikes while wind "
+        "drops and load rises, that co-move is the story — not any single line.",
+    )
 
     anomalies = view["anomalies"]
     st.subheader(f"Anomalies through this interval ({len(anomalies)})")
+    st.caption("Flags that had already fired by this hour. Later events stay hidden until you scrub forward.")
     if anomalies.empty:
         st.info("None yet.")
     else:
         st.dataframe(
             anomalies[["timestamp_utc", "category", "location", "severity", "explanation"]],
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
@@ -73,7 +89,17 @@ def render() -> None:
     merged = frames[0]
     for extra in frames[1:]:
         merged = merged.merge(extra, on="timestamp_utc", how="outer")
-    st.plotly_chart(
-        time_series(merged, {name: name for name in merged.columns if name != "timestamp_utc"}, "Fleet SOC", "MWh"),
-        use_container_width=True,
+    plot(
+        time_series(
+            merged,
+            {name: name for name in merged.columns if name != "timestamp_utc"},
+            "Fleet SOC",
+            "MWh",
+        )
+    )
+    chart_note(
+        "What this shows:",
+        "Fleet energy stored (MWh) for each strategy up to this hour. Compare who conserved SOC into "
+        "the expensive/stressful period versus who idle'd or spent early. Oracle may look better — "
+        "it cheated with future prices.",
     )

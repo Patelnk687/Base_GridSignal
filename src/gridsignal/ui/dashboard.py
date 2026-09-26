@@ -5,7 +5,7 @@ from __future__ import annotations
 import streamlit as st
 
 from gridsignal.ui.pages import anomalies, battery_lab, data_quality, overview, replay
-from gridsignal.ui.theme import apply_theme
+from gridsignal.ui.theme import appearance_toggle, apply_theme, render_sidebar_brand
 
 
 def main() -> None:
@@ -15,9 +15,20 @@ def main() -> None:
         layout="wide",
         initial_sidebar_state="expanded",
     )
+    # Toggle first so apply_theme reads the chosen appearance.
+    render_sidebar_brand()
+    appearance_toggle()
     apply_theme()
-    st.sidebar.markdown("**GridSignal**")
-    st.sidebar.caption("ERCOT anomalies, evidence, and a virtual battery fleet. Analytical simulation only.")
+    st.sidebar.divider()
+    st.sidebar.markdown("**5-minute demo path**")
+    st.sidebar.caption(
+        "1) Overview peak stress · 2) Anomaly facts/evidence · "
+        "3) Battery idle vs hybrid vs oracle · 4) Replay scrub · 5) Data quality / snapshot."
+    )
+    st.sidebar.caption(
+        "Offline: GRIDSIGNAL_DATA_MODE=snapshot after "
+        "`python -m gridsignal.tools.refresh_live_snapshot`."
+    )
     navigation = st.navigation(
         [
             st.Page(overview.render, title="Overview", url_path="overview", default=True),

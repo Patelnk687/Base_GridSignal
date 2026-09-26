@@ -7,13 +7,22 @@ import streamlit as st
 
 from gridsignal.explain.evidence import bundle_for_event
 from gridsignal.ui.state import get_result
-from gridsignal.ui.theme import synthetic_banner
+from gridsignal.ui.theme import chart_note, mode_banner, why_block
 
 
 def render() -> None:
     result = get_result()
-    synthetic_banner("Anomaly baselines use only earlier intervals. Correlation is not causation.")
+    mode_banner(
+        synthetic=result.synthetic,
+        scenario_id=result.scenario_id,
+        text="Anomaly baselines use only earlier intervals. Correlation is not causation.",
+    )
     st.title("Anomaly explorer")
+    why_block(
+        "<strong>Non-obvious output:</strong> most ERCOT viewers see a spike. GridSignal names the "
+        "series, the past-only baseline, the deviation, and aligned evidence (load/wind/price) with "
+        "report IDs. Facts ≠ interpretation ≠ hypothesis — coincidence in time is not cause."
+    )
     events = result.anomalies
     if events.empty:
         st.info("No anomalies in this scenario.")
@@ -38,9 +47,26 @@ def render() -> None:
         return
 
     st.dataframe(
-        view[["timestamp_utc", "location", "category", "severity", "observed", "baseline", "deviation", "modified_z"]],
-        use_container_width=True,
+        view[
+            [
+                "timestamp_utc",
+                "location",
+                "category",
+                "severity",
+                "observed",
+                "baseline",
+                "deviation",
+                "modified_z",
+            ]
+        ],
+        width="stretch",
         hide_index=True,
+    )
+    chart_note(
+        "How to read the table:",
+        "<em>observed</em> is the live value; <em>baseline</em> is the causal rolling median "
+        "(earlier hours only); <em>deviation</em> is the gap; <em>modified_z</em> is robust z vs MAD "
+        "(blank/unavailable when the recent window was flat). Pick an event below for the full write-up.",
     )
     labels = [
         f"{pd.Timestamp(row.timestamp_utc).strftime('%m-%d %H:%M')} · {row.category} · {row.location}"
@@ -72,4 +98,9 @@ def render() -> None:
     if not evidence:
         st.info("No aligned measurements at this timestamp.")
         return
-    st.dataframe(pd.DataFrame([item.model_dump() for item in evidence]), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame([item.model_dump() for item in evidence]), width="stretch", hide_index=True)
+    chart_note(
+        "What evidence means:",
+        "Other series measured at the same timestamp (with source product IDs). "
+        "Use them to see co-moves — e.g. wind down while price up — without calling that causation.",
+    )

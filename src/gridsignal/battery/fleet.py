@@ -49,18 +49,35 @@ def simulate_fleet(
         raise KeyError(strategy_name)
     fleet = fleet or FleetSpec()
     policy = STRATEGIES[strategy_name]
-    index = pd.DatetimeIndex(pd.to_datetime(prices.index, utc=True)).sort_values()
     prices = prices.copy()
     prices.index = pd.to_datetime(prices.index, utc=True)
+    prices = prices[~prices.index.isna()].sort_index()
+    prices = prices[~prices.index.duplicated(keep="last")]
+    index = pd.DatetimeIndex(prices.index)
+    if len(index) == 0:
+        return SimulationResult(
+            strategy=strategy_name,
+            uses_future=strategy_name == "oracle_price",
+            steps=pd.DataFrame(),
+            summary=summarize(pd.DataFrame(), fleet, strategy_name == "oracle_price"),
+        )
+    stress = stress.copy()
+    stress.index = pd.to_datetime(stress.index, utc=True)
     stress = stress.reindex(index)
     hours = _interval_hours(index)
+    if len(hours) != len(index):
+        raise ValueError(f"interval length mismatch: index={len(index)} hours={len(hours)}")
     soc = fleet.battery.initial_soc_fraction * fleet.battery.capacity_kwh
     steps: list[StepResult] = []
     uses_future = strategy_name == "oracle_price"
     for stamp, interval_hours in zip(index, hours, strict=True):
         price_value = prices.loc[stamp]
+        if isinstance(price_value, pd.Series):
+            price_value = price_value.iloc[-1]
         price = None if pd.isna(price_value) else float(price_value)
         stress_value = stress.loc[stamp]
+        if isinstance(stress_value, pd.Series):
+            stress_value = stress_value.iloc[-1]
         stress_score = None if pd.isna(stress_value) else float(stress_value)
         context = DispatchContext(
             timestamp_utc=stamp.to_pydatetime(),

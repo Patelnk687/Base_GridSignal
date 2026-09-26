@@ -33,6 +33,8 @@ class Settings(BaseSettings):
     ercot_client_id: str = PUBLISHED_CLIENT_ID
 
     data_mode: str = Field(default="demo", alias="GRIDSIGNAL_DATA_MODE")
+    live_lookback_days: int = Field(default=7, alias="GRIDSIGNAL_LIVE_LOOKBACK_DAYS")
+    snapshot_dir: Path = Field(default=Path("data/live"), alias="GRIDSIGNAL_SNAPSHOT_DIR")
     cache_path: Path = Path("data/cache/ercot.sqlite")
     request_timeout_s: float = 30.0
     max_retries: int = 4
@@ -54,8 +56,11 @@ class Settings(BaseSettings):
 
     @property
     def resolved_mode(self) -> str:
-        if self.data_mode.lower() == "live" and self.live_credentials_ready:
+        mode = self.data_mode.lower().strip()
+        if mode == "live" and self.live_credentials_ready:
             return "live"
+        if mode in {"snapshot", "live_cache", "cached"}:
+            return "snapshot"
         return "demo"
 
 

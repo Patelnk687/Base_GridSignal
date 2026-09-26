@@ -6,15 +6,25 @@ import pandas as pd
 import streamlit as st
 
 from gridsignal.battery.models import BatterySpec, FleetSpec
-from gridsignal.ui.charts import time_series
+from gridsignal.ui.charts import plot, time_series
 from gridsignal.ui.state import get_result, rerun
-from gridsignal.ui.theme import synthetic_banner
+from gridsignal.ui.theme import chart_note, mode_banner, why_block
 
 
 def render() -> None:
     result = get_result()
-    synthetic_banner("Battery behavior is simulated. Nothing is dispatched to the ERCOT grid.")
+    mode_banner(
+        synthetic=result.synthetic,
+        scenario_id=result.scenario_id,
+        text="Battery behavior is simulated. Nothing is dispatched to the ERCOT grid.",
+    )
     st.title("Battery lab")
+    why_block(
+        "<strong>What most people miss:</strong> a price spike chart does not tell you whether a "
+        "physically constrained fleet could have discharged into it. Compare <em>idle</em> (do nothing), "
+        "causal price/stress policies, and an <em>oracle</em> that peeks at future prices — the gap is "
+        "foresight value, not a claim the fleet moved ERCOT prices."
+    )
     st.caption(result.fleet.battery.assumption_note)
 
     with st.form("fleet"):
@@ -73,32 +83,54 @@ def render() -> None:
         "net_energy_value_usd",
         "violation_count",
     ]
-    st.dataframe(table[show], use_container_width=True, hide_index=True)
-    st.caption(table.iloc[0]["economics_note"])
+    available = [column for column in show if column in table.columns]
+    st.subheader("Strategy comparison")
+    st.dataframe(table[available], width="stretch", hide_index=True)
+    chart_note(
+        "How to read the table:",
+        "Each row is one dispatch policy on the same price/stress series. "
+        "<code>label=causal</code> means decisions use only past data; "
+        "<code>oracle_perfect_foresight</code> peeks ahead (benchmark only). "
+        "Net value = discharge MWh × price − charge MWh × price − optional degradation. "
+        "Violation count must stay 0 (SOC, power, no simultaneous charge/discharge).",
+    )
+    note = table.iloc[0].get("economics_note") if not table.empty else None
+    if note:
+        st.caption(str(note))
 
     strategy = st.selectbox("Strategy timeline", list(result.simulations))
     sim = result.simulations[strategy]
     if sim.uses_future:
         st.warning("This strategy is an oracle perfect-foresight benchmark. It uses prices from later intervals.")
     steps = sim.steps.copy()
+    if steps.empty:
+        st.info("No price intervals available for this fleet run.")
+        return
     steps["soc_pct"] = steps["soc_kwh"] / result.fleet.battery.capacity_kwh * 100
     left, right = st.columns(2)
     with left:
-        st.plotly_chart(
+        plot(
             time_series(
                 steps,
                 {"fleet_charge_mw": "Charge", "fleet_discharge_mw": "Discharge"},
                 f"{strategy} fleet power",
                 "MW",
-            ),
-            use_container_width=True,
+            )
+        )
+        chart_note(
+            "What this shows:",
+            "Fleet grid charge MW (into batteries) and discharge MW (to the grid) over time. "
+            "They never overlap in the same hour — the simulator forbids simultaneous charge/discharge.",
         )
     with right:
-        st.plotly_chart(
-            time_series(steps, {"soc_pct": "State of charge"}, f"{strategy} state of charge", "%"),
-            use_container_width=True,
+        plot(time_series(steps, {"soc_pct": "State of charge"}, f"{strategy} state of charge", "%"))
+        chart_note(
+            "What this shows:",
+            "State of charge as % of pack capacity. Watch whether the policy held energy into expensive "
+            "or high-stress hours, or spent SOC too early. Efficiency losses appear as SOC drop without "
+            "full discharge credit.",
         )
-    violations = sim.summary["violation_count"]
+    violations = sim.summary.get("violation_count", 0)
     if violations:
         st.error(f"{violations} constraint violation(s).")
     else:

@@ -89,23 +89,23 @@ def datasets() -> list[DatasetSpec]:
             value_columns=[
                 ValueColumn(
                     column=name,
-                    aliases=[name.lower()],
+                    aliases=[name.lower(), name.replace("_", ""), camel],
                     series=f"load_mw_{name.lower()}",
                     kind=SeriesKind.ACTUAL,
                     unit="MW",
                     unit_note=mw_note,
                     location=name,
                 )
-                for name in (
-                    "COAST",
-                    "EAST",
-                    "FAR_WEST",
-                    "NORTH",
-                    "NORTH_C",
-                    "SOUTHERN",
-                    "SOUTH_C",
-                    "WEST",
-                    "TOTAL",
+                for name, camel in (
+                    ("COAST", "coast"),
+                    ("EAST", "east"),
+                    ("FAR_WEST", "farWest"),
+                    ("NORTH", "north"),
+                    ("NORTH_C", "northC"),
+                    ("SOUTHERN", "southern"),
+                    ("SOUTH_C", "southC"),
+                    ("WEST", "west"),
+                    ("TOTAL", "total"),
                 )
             ],
         ),
@@ -117,8 +117,8 @@ def datasets() -> list[DatasetSpec]:
             mvp=True,
             verification=(
                 "EMIL id is in the 2023 beta release notes and the 2024-R9 artifact update. "
-                "XSD element names were parsed. Artifact slug was not copied from an official "
-                "example in this research pass."
+                "XSD element names were parsed. Live catalog resolved "
+                "np4-732-cd/wpp_hrly_avrg_actl_fcast; live fields use genSystemWide."
             ),
             documentation_url=_emil("NP4-732-CD"),
             granularity="Hourly",
@@ -132,6 +132,7 @@ def datasets() -> list[DatasetSpec]:
             value_columns=[
                 ValueColumn(
                     column="SYSTEM_WIDE_GEN",
+                    aliases=["genSystemWide", "SYSTEMWIDEGEN"],
                     series="wind_gen_mw",
                     kind=SeriesKind.ACTUAL,
                     unit="MW",
@@ -140,6 +141,7 @@ def datasets() -> list[DatasetSpec]:
                 ),
                 ValueColumn(
                     column="STWPF_SYSTEM_WIDE",
+                    aliases=["STWPFSystemWide"],
                     series="wind_forecast_stwpf_mw",
                     kind=SeriesKind.FORECAST,
                     unit="MW",
@@ -148,6 +150,7 @@ def datasets() -> list[DatasetSpec]:
                 ),
                 ValueColumn(
                     column="WGRPP_SYSTEM_WIDE",
+                    aliases=["WGRPPSystemWide"],
                     series="wind_forecast_wgrpp_mw",
                     kind=SeriesKind.FORECAST,
                     unit="MW",
@@ -162,7 +165,10 @@ def datasets() -> list[DatasetSpec]:
             name="Solar Power Production - Hourly Averaged Actual and Forecasted Values",
             required_for_mvp=True,
             mvp=True,
-            verification="EMIL id in release notes. XSD fields parsed. Artifact slug not verified here.",
+            verification=(
+                "EMIL id in release notes. Live catalog resolved "
+                "np4-737-cd/spp_hrly_avrg_actl_fcast; live fields use genSystemWide."
+            ),
             documentation_url=_emil("NP4-737-CD"),
             granularity="Hourly",
             geographic="System-wide in the base hourly report",
@@ -172,6 +178,7 @@ def datasets() -> list[DatasetSpec]:
             value_columns=[
                 ValueColumn(
                     column="SYSTEM_WIDE_GEN",
+                    aliases=["genSystemWide", "SYSTEMWIDEGEN"],
                     series="solar_gen_mw",
                     kind=SeriesKind.ACTUAL,
                     unit="MW",
@@ -180,6 +187,7 @@ def datasets() -> list[DatasetSpec]:
                 ),
                 ValueColumn(
                     column="STPPF_SYSTEM_WIDE",
+                    aliases=["STPPFSystemWide"],
                     series="solar_forecast_stppf_mw",
                     kind=SeriesKind.FORECAST,
                     unit="MW",
@@ -188,6 +196,7 @@ def datasets() -> list[DatasetSpec]:
                 ),
                 ValueColumn(
                     column="PVGRPP_SYSTEM_WIDE",
+                    aliases=["PVGRPPSystemWide"],
                     series="solar_forecast_pvgrpp_mw",
                     kind=SeriesKind.FORECAST,
                     unit="MW",
@@ -203,8 +212,8 @@ def datasets() -> list[DatasetSpec]:
             required_for_mvp=True,
             mvp=True,
             verification=(
-                "EMIL id and name are in the 2023 beta release notes. XSD element "
-                "SPPatHubsLoadZones (report type 12301) was parsed. Artifact slug not verified."
+                "EMIL id and name are in the 2023 beta release notes. Live catalog resolved "
+                "np6-905-cd/spp_node_zone_hub. settlementPoint equality filter confirmed live."
             ),
             documentation_url=_emil("NP6-905-CD"),
             granularity="Settlement interval. XSD includes DeliveryHour and DeliveryInterval.",
@@ -212,9 +221,8 @@ def datasets() -> list[DatasetSpec]:
             frequency_note="Real-time settlement prices. High cardinality if unfiltered.",
             contributes="Price level, ramps, hub-zone spreads, battery economics.",
             limitations=(
-                "DeliveryInterval's sub-hour position was not verified against a live row. "
-                "The normalizer timestamps the hour ending and flags unresolved sub-hour "
-                "intervals instead of inventing a 15-minute offset. Unfiltered node files are large."
+                "Live pulls average the four DeliveryInterval prices within each hour. "
+                "Unfiltered node files are large; GridSignal requests named hubs/zones only."
             ),
             value_columns=[
                 ValueColumn(

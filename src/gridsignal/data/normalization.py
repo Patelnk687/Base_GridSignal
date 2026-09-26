@@ -26,6 +26,8 @@ _DATE_COLUMNS = {
     "delivery_date",
 }
 _HOUR_COLUMNS = {"hourending", "hour_ending"}
+# Live NP6-905 uses deliveryHour when HourEnding is absent.
+_HOUR_FALLBACK_COLUMNS = {"deliveryhour"}
 _DST_COLUMNS = {"dstflag", "repeatedhourflag"}
 _POINT_COLUMNS = {
     "settlementpoint",
@@ -128,6 +130,9 @@ def _as_int(value: object, label: str) -> int:
     text = str(value).strip()
     if text.lower() in {"", "nan", "none", "null"}:
         raise NormalizationError(f"{label} is missing")
+    # Live load reports publish hourEnding as "01:00".
+    if ":" in text:
+        text = text.split(":", 1)[0]
     try:
         return int(float(text))
     except ValueError as exc:
@@ -170,7 +175,13 @@ def _location(row: dict[str, object], column: ValueColumn) -> str:
     if column.location:
         return column.location
     if column.location_column:
-        raw = _lookup(row, column.location_column, column.location_column.lower())
+        raw = _lookup(
+            row,
+            column.location_column,
+            "settlementPoint",
+            "SettlementPointName",
+            "SettlementPoint",
+        )
         if raw is None or str(raw).strip().lower() in {"", "nan", "none"}:
             raise NormalizationError(f"location column {column.location_column} is empty")
         return str(raw).strip()
@@ -193,10 +204,17 @@ def timestamp_from_row(row: dict[str, object]) -> tuple[datetime, bool | None, l
             date_value = value
             break
     hour_value = None
+    hour_from_delivery_hour = False
     for key, value in row.items():
         if str(key).lower() in _HOUR_COLUMNS:
             hour_value = value
             break
+    if hour_value is None:
+        for key, value in row.items():
+            if str(key).lower() in _HOUR_FALLBACK_COLUMNS:
+                hour_value = value
+                hour_from_delivery_hour = True
+                break
     dst_value = None
     for key, value in row.items():
         if str(key).lower() in _DST_COLUMNS:
@@ -207,9 +225,8 @@ def timestamp_from_row(row: dict[str, object]) -> tuple[datetime, bool | None, l
     dst_flag = _as_bool(dst_value)
     delivery = _as_date(date_value)
     hour_ending = _as_int(hour_value, "hour ending")
-    # DeliveryHour is a different XSD element. Do not silently treat it as hour ending.
-    if any(str(key).lower() == "deliveryhour" for key in row) and hour_value is None:
-        raise NormalizationError("DeliveryHour was present without HourEnding; mapping is unverified")
+    if hour_from_delivery_hour:
+        flags.append("delivery_hour_as_hour_ending")
     interval_raw = _lookup(row, "DeliveryInterval", "deliveryInterval")
     if interval_raw not in (None, "") and not (isinstance(interval_raw, float) and pd.isna(interval_raw)):
         flags.append("subhour_interval_unresolved")
