@@ -6,48 +6,10 @@ import pandas as pd
 import streamlit as st
 
 from gridsignal.analytics.features import pivot_series
-from gridsignal.ui.charts import plot, time_series
+from gridsignal.ui.charts import plot, spread_series, time_series
+from gridsignal.ui.insights import build_insight_cards
 from gridsignal.ui.state import get_result
-from gridsignal.ui.theme import chart_note, mode_banner, pipeline_strip, why_block
-
-
-def _missed_insight(result) -> str:
-    """One non-obvious sentence judges can repeat — computed from this window."""
-    hub = pivot_series(result.observations, "spp_usd_per_mwh", "HB_HUBAVG")
-    houston = pivot_series(result.observations, "spp_usd_per_mwh", "LZ_HOUSTON")
-    load = pivot_series(result.observations, "load_mw_total", "TOTAL")
-    wind = pivot_series(result.observations, "wind_gen_mw", "SYSTEM")
-    bits: list[str] = []
-    if not hub.empty and not houston.empty:
-        spread = (houston.reindex(hub.index) - hub).dropna()
-        if not spread.empty:
-            stamp = spread.abs().idxmax()
-            bits.append(
-                f"Largest hub-Houston spread is {spread.loc[stamp]:+.1f} $/MWh at "
-                f"{pd.Timestamp(stamp).strftime('%m-%d %H:%MZ')} — congestion the hub average alone hides."
-            )
-    if not load.empty and not wind.empty:
-        aligned = pd.concat([load.rename("load"), wind.rename("wind")], axis=1).dropna()
-        if len(aligned) >= 12:
-            load_z = (aligned["load"] - aligned["load"].rolling(12, min_periods=8).median()) / aligned[
-                "load"
-            ].rolling(12, min_periods=8).std().replace(0, pd.NA)
-            wind_z = (aligned["wind"] - aligned["wind"].rolling(12, min_periods=8).median()) / aligned[
-                "wind"
-            ].rolling(12, min_periods=8).std().replace(0, pd.NA)
-            coincident = aligned[(load_z > 1.5) & (wind_z < -1.5)]
-            if not coincident.empty:
-                bits.append(
-                    f"{len(coincident)} hour(s) show load elevated while wind is depressed vs their own "
-                    "recent past — the co-move most single-series dashboards miss."
-                )
-    cats = result.anomalies["category"].value_counts().to_dict() if not result.anomalies.empty else {}
-    if cats:
-        top = max(cats, key=cats.get)
-        bits.append(f"Dominant anomaly class: {top.replace('_', ' ')} ({cats[top]} events).")
-    if not bits:
-        return "Scan peak stress, then open Anomaly Explorer for the evidence IDs behind each flag."
-    return " ".join(bits[:2])
+from gridsignal.ui.theme import chart_note, hero_block, insight_cards, mode_banner, pipeline_strip, severity_pill, why_block
 
 
 def render() -> None:
@@ -57,17 +19,25 @@ def render() -> None:
         scenario_id=result.scenario_id,
         text=result.warnings[0] if result.warnings else "Demo mode.",
     )
-    st.title("What most people miss in ERCOT's public feeds")
+    hero_block(
+        "What most people miss in ERCOT's public feeds",
+        "Co-moving odd hours, hub–zone congestion gaps, and what a constrained virtual battery fleet "
+        "would have done on the same clock — with evidence IDs, not vibes.",
+    )
     pipeline_strip()
     why_block(
         "<strong>The problem:</strong> Base reads prices, load, generation, and congestion better than "
         "everyone else. Raw EMIL charts do not say which hours are jointly weird, why, or what a "
         "constrained battery fleet would have done.<br/>"
         "<strong>Our why:</strong> causal anomaly detection (past-only baselines) + evidence-grounded "
-        "explanations + virtual fleet strategies on the same clock — offline from a saved week, no "
-        "dispatch and no price-impact fairy tales."
+        "explanations + virtual fleet strategies — offline from a saved week."
     )
-    why_block(f"<strong>In this window:</strong> {_missed_insight(result)}")
+
+    cards = build_insight_cards(result)
+    if cards:
+        st.subheader("Signals in this window")
+        insight_cards(cards)
+
     for warning in result.warnings[1:]:
         st.warning(warning)
 
@@ -75,9 +45,10 @@ def render() -> None:
     peak = None if stress.empty else stress.loc[stress["score"].idxmax()]
     latest = None if stress.empty else stress.iloc[-1]
     hybrid = result.simulations["hybrid"].summary
+    idle = result.simulations["idle"].summary
     cols = st.columns(4)
     cols[0].metric(
-        "Peak stress (window)",
+        "Peak stress",
         "—" if peak is None else f"{peak['score']:.0f}",
         None if peak is None else str(pd.Timestamp(peak["timestamp_utc"]).strftime("%m-%d %H:%MZ")),
     )
@@ -87,16 +58,22 @@ def render() -> None:
         "Hybrid discharge",
         "—" if discharge is None else f"{float(discharge):.2f} MWh",
     )
+    hybrid_val = hybrid.get("net_energy_value_usd")
+    idle_val = idle.get("net_energy_value_usd")
+    delta = None
+    if hybrid_val is not None and idle_val is not None:
+        delta = f"{float(hybrid_val) - float(idle_val):+,.0f} vs idle"
     cols[3].metric(
         "Hybrid net value",
-        "—" if hybrid.get("net_energy_value_usd") is None else f"${hybrid['net_energy_value_usd']:,.0f}",
+        "—" if hybrid_val is None else f"${float(hybrid_val):,.0f}",
+        delta,
     )
     last_stress = "—"
     if latest is not None and latest["score"] is not None:
         last_stress = f"{latest['score']:.0f}"
     st.caption(
-        "Metrics: peak GridSignal stress (0–100, not an ERCOT rating); anomaly count; "
-        "hybrid-strategy discharge MWh; ledger dollars = MWh × interval price (not market impact). "
+        "Peak GridSignal stress is 0–100 (not an ERCOT rating). "
+        "Dollars are MWh × interval price — not market impact. "
         f"Last-hour stress: {last_stress}."
     )
 
@@ -115,13 +92,13 @@ def render() -> None:
                 "MW",
                 marker_x=peak_x,
                 marker_label="peak stress",
+                fill_first=True,
             )
         )
         chart_note(
             "What this shows:",
-            "System load (TOTAL), wind, and solar in MW on one UTC clock. "
-            "The dotted marker is the peak stress hour — look for load rising while wind falls. "
-            "Source products: NP6-345-CD load, NP4-732-CD wind, NP4-737-CD solar.",
+            "System load (filled), wind, and solar in MW. Dotted line = peak stress hour — "
+            "watch load rise while wind falls. Sources: NP6-345-CD, NP4-732-CD, NP4-737-CD.",
         )
     hub = pivot_series(result.observations, "spp_usd_per_mwh", "HB_HUBAVG").rename("hub")
     houston = pivot_series(result.observations, "spp_usd_per_mwh", "LZ_HOUSTON").rename("houston")
@@ -140,9 +117,17 @@ def render() -> None:
         )
         chart_note(
             "What this shows:",
-            "Real-time settlement point prices ($/MWh). HB_HUBAVG is the hub average; "
-            "LZ_HOUSTON / LZ_WEST are load zones. When Houston lifts above the hub, that gap is "
-            "congestion — invisible if you only plot one series. NP6-905-CD, hourly means of intervals.",
+            "Hub vs load-zone prices ($/MWh). When Houston lifts off the hub, that is congestion "
+            "texture a single-series chart never shows. NP6-905-CD hourly means.",
+        )
+
+    if not hub.empty and not houston.empty:
+        spread = (houston.reindex(hub.index) - hub).dropna().rename("spread").reset_index(names="timestamp_utc")
+        plot(spread_series(spread, "spread", "Houston − hub spread (congestion tell)", marker_x=peak_x))
+        chart_note(
+            "What this shows:",
+            "Signed $/MWh gap. Above zero = Houston richer than the hub (typical binding path into the coast). "
+            "Below zero = Houston cheaper. This is often what operators mean by 'the hub lied.'",
         )
 
     stress_chart = result.stress.rename(columns={"score": "stress"}).copy()
@@ -154,23 +139,19 @@ def render() -> None:
             "0–100",
             marker_x=peak_x,
             marker_label="peak",
+            fill_first=True,
         )
     )
     chart_note(
         "What this shows:",
-        "A project score combining load level/ramp, renewable drop, and price level/change "
-        "(weights renormalize when an input is missing — missing ≠ zero). "
-        "Not an official ERCOT reliability rating. Read the sentence under the chart for which "
-        "components drove the peak hour.",
+        "Composite 0–100 from load level/ramp, renewable drop, price level/change. "
+        "Missing inputs are dropped (never treated as zero). Not an official ERCOT rating.",
     )
     if peak is not None:
-        st.write(peak["explanation"])
+        st.info(peak["explanation"])
 
     st.subheader("Highest-severity anomalies")
-    st.caption(
-        "Each row is an hour that cleared a past-only median/MAD rule (or absolute floor when MAD is 0). "
-        "Open Anomaly Explorer for Facts / Interpretation / Hypothesis and evidence IDs."
-    )
+    st.caption("Past-only baselines. Open Anomaly Explorer for Facts / Interpretation / Hypothesis.")
     if result.anomalies.empty:
         st.info("No anomalies matched the configured thresholds.")
         return
@@ -178,8 +159,27 @@ def render() -> None:
     view = result.anomalies.copy()
     view["_rank"] = view["severity"].map(lambda item: rank.get(str(item), 9))
     view = view.sort_values(["_rank", "timestamp_utc"], ascending=[True, False]).head(8)
-    st.dataframe(
-        view[["timestamp_utc", "location", "category", "severity", "observed", "baseline", "deviation"]],
-        width="stretch",
-        hide_index=True,
+    html_rows = []
+    for row in view.itertuples(index=False):
+        html_rows.append(
+            "<tr>"
+            f"<td>{pd.Timestamp(row.timestamp_utc).strftime('%m-%d %H:%MZ')}</td>"
+            f"<td>{row.location}</td>"
+            f"<td>{str(row.category).replace('_', ' ')}</td>"
+            f"<td>{severity_pill(str(row.severity))}</td>"
+            f"<td>{float(row.observed):,.1f}</td>"
+            f"<td>{float(row.baseline):,.1f}</td>"
+            f"<td>{float(row.deviation):+,.1f}</td>"
+            "</tr>"
+        )
+    st.markdown(
+        "<table style='width:100%; border-collapse:collapse; font-size:0.9rem;'>"
+        "<thead><tr>"
+        "<th align='left'>Time</th><th align='left'>Location</th><th align='left'>Category</th>"
+        "<th align='left'>Severity</th><th align='right'>Observed</th>"
+        "<th align='right'>Baseline</th><th align='right'>Deviation</th>"
+        "</tr></thead><tbody>"
+        + "".join(html_rows)
+        + "</tbody></table>",
+        unsafe_allow_html=True,
     )

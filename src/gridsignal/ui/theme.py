@@ -57,12 +57,6 @@ div[data-baseweb="select"] > div,
 }
 h1, h2, h3, h4 { color: #10233f !important; letter-spacing: -0.02em; }
 
-div[data-testid="stMetric"] {
-  background: rgba(255,255,255,0.92) !important;
-  border: 1px solid #d7e0ea !important;
-  border-radius: 14px;
-  padding: 0.7rem 0.85rem;
-}
 div[data-testid="stAlert"] { color: #152033 !important; }
 
 .gs-brand { font-size: 1.55rem; font-weight: 700; letter-spacing: -0.02em; color: #10233f !important; margin-bottom: 0.15rem; }
@@ -98,6 +92,49 @@ div[data-testid="stAlert"] { color: #152033 !important; }
 .gs-step {
   background: #fff; border: 1px solid #d7e0ea; color: #152033 !important;
   border-radius: 999px; padding: 0.28rem 0.7rem; font-size: 0.78rem; font-weight: 500;
+}
+.gs-hero {
+  background: linear-gradient(135deg, #0f6e56 0%, #147a8c 55%, #1d4ed8 100%);
+  border-radius: 18px; padding: 1.15rem 1.35rem; margin: 0.35rem 0 1rem 0;
+  color: #fff !important; box-shadow: 0 12px 40px rgba(15,110,86,0.22);
+}
+.gs-hero h1 { color: #fff !important; font-size: 1.65rem; margin: 0 0 0.35rem 0; }
+.gs-hero p { color: rgba(255,255,255,0.92) !important; margin: 0; font-size: 0.98rem; line-height: 1.45; }
+.gs-insight-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
+}
+.gs-insight {
+  border-radius: 14px; padding: 0.85rem 0.95rem; border: 1px solid #d7e0ea;
+  background: #fff; box-shadow: 0 1px 0 rgba(16,35,63,0.04);
+}
+.gs-insight .eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 600; margin-bottom: 0.25rem; font-family: "IBM Plex Mono", monospace;
+}
+.gs-insight .title { font-size: 1.05rem; font-weight: 700; color: #10233f !important; margin-bottom: 0.3rem; }
+.gs-insight .body { font-size: 0.86rem; color: #3d4f63 !important; line-height: 1.4; }
+.gs-insight.teal { border-top: 4px solid #0f6e56; }
+.gs-insight.teal .eyebrow { color: #0f6e56 !important; }
+.gs-insight.amber { border-top: 4px solid #c27803; }
+.gs-insight.amber .eyebrow { color: #b45309 !important; }
+.gs-insight.coral { border-top: 4px solid #e11d48; }
+.gs-insight.coral .eyebrow { color: #be123c !important; }
+.gs-insight.steel { border-top: 4px solid #2563eb; }
+.gs-insight.steel .eyebrow { color: #1d4ed8 !important; }
+.gs-sev {
+  display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 700; font-family: "IBM Plex Mono", monospace;
+}
+.gs-sev-high { background: #ffe4e6; color: #be123c !important; }
+.gs-sev-moderate { background: #ffedd5; color: #c2410c !important; }
+.gs-sev-low { background: #e0f2fe; color: #0369a1 !important; }
+div[data-testid="stMetric"] {
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%) !important;
+  border: 1px solid #cfe3da !important;
+  border-radius: 16px;
+  padding: 0.75rem 0.9rem;
+  box-shadow: 0 8px 24px rgba(15,110,86,0.06);
 }
 </style>
 """
@@ -154,15 +191,14 @@ div[data-baseweb="select"] > div,
 h1, h2, h3, h4 { color: #f3f6fb !important; letter-spacing: -0.02em; }
 
 div[data-testid="stMetric"] {
-  background: #141a2e !important;
-  border: 1px solid rgba(255,255,255,0.10) !important;
-  border-radius: 14px;
-  padding: 0.7rem 0.85rem;
+  background: linear-gradient(180deg, #182238 0%, #141a2e 100%) !important;
+  border: 1px solid rgba(45,212,191,0.18) !important;
+  border-radius: 16px;
+  padding: 0.75rem 0.9rem;
 }
 div[data-testid="stAlert"] { color: #e7ecf5 !important; }
 div[data-testid="stDataFrame"] { color: #e7ecf5 !important; }
 
-/* Inputs / radios on dark */
 .stRadio > div, [data-baseweb="radio"] label { color: #e7ecf5 !important; }
 div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
   background-color: #141a2e !important;
@@ -204,6 +240,44 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
   background: #141a2e; border: 1px solid rgba(255,255,255,0.12); color: #e7ecf5 !important;
   border-radius: 999px; padding: 0.28rem 0.7rem; font-size: 0.78rem; font-weight: 500;
 }
+.gs-hero {
+  background: linear-gradient(135deg, #0d3f34 0%, #134e4a 40%, #1e3a5f 100%);
+  border-radius: 18px; padding: 1.15rem 1.35rem; margin: 0.35rem 0 1rem 0;
+  color: #fff !important; border: 1px solid rgba(45,212,191,0.25);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.gs-hero h1 { color: #ecfeff !important; font-size: 1.65rem; margin: 0 0 0.35rem 0; }
+.gs-hero p { color: rgba(236,254,255,0.9) !important; margin: 0; font-size: 0.98rem; line-height: 1.45; }
+.gs-insight-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
+}
+.gs-insight {
+  border-radius: 14px; padding: 0.85rem 0.95rem;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: #141a2e;
+}
+.gs-insight .eyebrow {
+  font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase;
+  font-weight: 600; margin-bottom: 0.25rem; font-family: "IBM Plex Mono", monospace;
+}
+.gs-insight .title { font-size: 1.05rem; font-weight: 700; color: #f3f6fb !important; margin-bottom: 0.3rem; }
+.gs-insight .body { font-size: 0.86rem; color: #b6c2d6 !important; line-height: 1.4; }
+.gs-insight.teal { border-top: 4px solid #2dd4bf; }
+.gs-insight.teal .eyebrow { color: #5eead4 !important; }
+.gs-insight.amber { border-top: 4px solid #f59e0b; }
+.gs-insight.amber .eyebrow { color: #fbbf24 !important; }
+.gs-insight.coral { border-top: 4px solid #fb7185; }
+.gs-insight.coral .eyebrow { color: #fda4af !important; }
+.gs-insight.steel { border-top: 4px solid #60a5fa; }
+.gs-insight.steel .eyebrow { color: #93c5fd !important; }
+.gs-sev {
+  display: inline-block; padding: 0.12rem 0.5rem; border-radius: 999px;
+  font-size: 0.72rem; font-weight: 700; font-family: "IBM Plex Mono", monospace;
+}
+.gs-sev-high { background: #4c0519; color: #fda4af !important; }
+.gs-sev-moderate { background: #431407; color: #fdba74 !important; }
+.gs-sev-low { background: #0c4a6e; color: #7dd3fc !important; }
 </style>
 """
 
@@ -263,6 +337,35 @@ def pipeline_strip() -> None:
         "</div>",
         unsafe_allow_html=True,
     )
+
+
+def hero_block(title: str, subtitle: str) -> None:
+    st.markdown(
+        f'<div class="gs-hero"><h1>{title}</h1><p>{subtitle}</p></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def insight_cards(cards: list) -> None:
+    if not cards:
+        return
+    parts = ['<div class="gs-insight-grid">']
+    for card in cards:
+        parts.append(
+            f'<div class="gs-insight {card.tone}">'
+            f'<div class="eyebrow">{card.eyebrow}</div>'
+            f'<div class="title">{card.title}</div>'
+            f'<div class="body">{card.body}</div>'
+            "</div>"
+        )
+    parts.append("</div>")
+    st.markdown("".join(parts), unsafe_allow_html=True)
+
+
+def severity_pill(severity: str) -> str:
+    key = str(severity).lower()
+    css = {"high": "gs-sev-high", "moderate": "gs-sev-moderate", "low": "gs-sev-low"}.get(key, "gs-sev-low")
+    return f'<span class="gs-sev {css}">{key}</span>'
 
 
 def mode_banner(*, synthetic: bool, scenario_id: str, text: str) -> None:

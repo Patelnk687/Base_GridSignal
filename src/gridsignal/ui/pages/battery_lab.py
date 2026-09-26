@@ -27,22 +27,62 @@ def render() -> None:
     )
     st.caption(result.fleet.battery.assumption_note)
 
-    with st.form("fleet"):
+    with st.form("gs_battery_lab_form_v3"):
         c1, c2, c3 = st.columns(3)
-        count = c1.number_input("Batteries", min_value=1, max_value=100000, value=result.fleet.count, step=100)
-        capacity = c2.number_input("Capacity (kWh)", min_value=1.0, value=float(result.fleet.battery.capacity_kwh))
-        charge_kw = c3.number_input("Max charge (kW)", min_value=0.1, value=float(result.fleet.battery.max_charge_kw))
-        discharge_kw = c1.number_input(
-            "Max discharge (kW)", min_value=0.1, value=float(result.fleet.battery.max_discharge_kw)
+        count = c1.number_input(
+            "Batteries",
+            min_value=1,
+            max_value=100000,
+            value=int(result.fleet.count),
+            step=100,
+            key="gs_batt_count",
         )
-        initial = c2.slider("Initial SOC", 0.1, 1.0, float(result.fleet.battery.initial_soc_fraction))
-        reserve = c3.slider("Reserve SOC", 0.0, 1.0, float(result.fleet.battery.reserve_fraction))
-        efficiency = c1.slider("One-way efficiency", 0.5, 1.0, float(result.fleet.battery.charge_efficiency))
+        capacity = c2.number_input(
+            "Capacity (kWh)",
+            min_value=1.0,
+            value=float(result.fleet.battery.capacity_kwh),
+            key="gs_batt_capacity",
+        )
+        charge_kw = c3.number_input(
+            "Max charge (kW)",
+            min_value=0.1,
+            value=float(result.fleet.battery.max_charge_kw),
+            key="gs_batt_charge_kw",
+        )
+        discharge_kw = c1.number_input(
+            "Max discharge (kW)",
+            min_value=0.1,
+            value=float(result.fleet.battery.max_discharge_kw),
+            key="gs_batt_discharge_kw",
+        )
+        # Keep sliders inside BatterySpec bounds (min SOC floor is 0.10).
+        initial = c2.slider(
+            "Initial SOC",
+            0.10,
+            1.0,
+            float(result.fleet.battery.initial_soc_fraction),
+            key="gs_batt_initial_soc",
+        )
+        reserve = c3.slider(
+            "Reserve SOC",
+            0.10,
+            1.0,
+            float(result.fleet.battery.reserve_fraction),
+            key="gs_batt_reserve_soc",
+        )
+        efficiency = c1.slider(
+            "One-way efficiency",
+            0.5,
+            1.0,
+            float(result.fleet.battery.charge_efficiency),
+            key="gs_batt_efficiency",
+        )
         degradation = c2.number_input(
             "Degradation ($/kWh throughput)",
             min_value=0.0,
             value=float(result.fleet.battery.degradation_usd_per_kwh),
             step=0.01,
+            key="gs_batt_degradation",
         )
         submitted = st.form_submit_button("Run fleet")
     if submitted:
@@ -57,13 +97,14 @@ def render() -> None:
                     reserve_fraction=float(reserve),
                     charge_efficiency=float(efficiency),
                     discharge_efficiency=float(efficiency),
+                    degradation_usd_per_kwh=float(degradation),
                 ),
             )
-            fleet.battery.degradation_usd_per_kwh = float(degradation)
-        except ValueError as exc:
+        except Exception as exc:
             st.error(str(exc))
             return
-        result = rerun(fleet)
+        rerun(fleet)
+        st.rerun()
 
     rows = []
     for name, sim in result.simulations.items():

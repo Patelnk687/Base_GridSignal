@@ -6,6 +6,7 @@ import streamlit as st
 
 from gridsignal.ui.pages import anomalies, battery_lab, data_quality, overview, replay
 from gridsignal.ui.theme import appearance_toggle, apply_theme, render_sidebar_brand
+from gridsignal.ui.state import purge_stale_widget_keys
 
 
 def main() -> None:
@@ -15,6 +16,7 @@ def main() -> None:
         layout="wide",
         initial_sidebar_state="expanded",
     )
+    purge_stale_widget_keys()
     # Toggle first so apply_theme reads the chosen appearance.
     render_sidebar_brand()
     appearance_toggle()

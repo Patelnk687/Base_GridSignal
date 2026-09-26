@@ -109,6 +109,36 @@ def _analyze(
     )
 
 
+def reanalyze(
+    previous: PipelineResult,
+    fleet: FleetSpec,
+    settings: Settings | None = None,
+) -> PipelineResult:
+    """Re-run fleet strategies on an existing result without re-fetching data."""
+    settings = settings or load_settings()
+    warnings = list(previous.warnings)
+    prices = pivot_series(previous.observations, "spp_usd_per_mwh", "HB_HUBAVG")
+    stress_series = (
+        previous.stress.set_index("timestamp_utc")["score"]
+        if not previous.stress.empty
+        else pd.Series(dtype=float)
+    )
+    simulations = compare_strategies(prices, stress_series, fleet)
+    return PipelineResult(
+        mode=previous.mode,
+        scenario_id=previous.scenario_id,
+        synthetic=previous.synthetic,
+        observations=previous.observations,
+        anomalies=previous.anomalies,
+        stress=previous.stress,
+        simulations=simulations,
+        explanations=previous.explanations,
+        forecast=previous.forecast,
+        warnings=warnings,
+        fleet=fleet,
+    )
+
+
 def run_demo(settings: Settings | None = None, fleet: FleetSpec | None = None) -> PipelineResult:
     settings = settings or load_settings()
     fleet = fleet or FleetSpec()
