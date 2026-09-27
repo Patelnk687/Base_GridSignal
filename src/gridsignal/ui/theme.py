@@ -59,22 +59,32 @@ h1, h2, h3, h4 { color: #10233f !important; letter-spacing: -0.02em; }
 
 div[data-testid="stAlert"] { color: #152033 !important; }
 
-.gs-brand {
-  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
-  color: #0f6e56 !important; margin-bottom: 0.2rem; line-height: 1.1;
+.gs-brand,
+.gs-brand * {
+  font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em;
+  color: #0a3d32 !important; margin-bottom: 0.2rem; line-height: 1.1;
+  opacity: 1 !important;
 }
-.gs-track { color: #4b5d73 !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; }
+.gs-track, .gs-track * { color: #243247 !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; opacity: 1 !important; }
 .gs-topbar {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.55rem 1rem;
-  margin: 0 0 0.85rem 0; padding-bottom: 0.7rem;
-  border-bottom: 1px solid #d7e0ea;
+  margin: 0 0 0.85rem 0; padding: 0.15rem 0 0.75rem 0;
+  border-bottom: 2px solid #0a3d32;
 }
-.gs-topbar-name {
-  font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
-  color: #0f6e56 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+.stApp .gs-topbar-name,
+.stApp .gs-topbar-name *,
+.gs-topbar-name,
+.gs-topbar-name * {
+  font-size: 2.15rem !important; font-weight: 800 !important; letter-spacing: -0.04em; line-height: 1.05;
+  color: #0a3d32 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif !important;
+  opacity: 1 !important; -webkit-text-fill-color: #0a3d32 !important;
 }
-.gs-topbar-tag {
-  color: #4b5d73 !important; font-size: 0.9rem; font-weight: 500;
+.stApp .gs-topbar-tag,
+.stApp .gs-topbar-tag *,
+.gs-topbar-tag,
+.gs-topbar-tag * {
+  color: #243247 !important; font-size: 0.95rem !important; font-weight: 600 !important;
+  opacity: 1 !important; -webkit-text-fill-color: #243247 !important;
 }
 .gs-kicker { color: #5b6b7c !important; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; margin-bottom: 0.35rem; }
 .gs-badge {
@@ -113,15 +123,21 @@ div[data-testid="stAlert"] { color: #152033 !important; }
   border-radius: 18px; padding: 1.25rem 1.4rem; margin: 0.35rem 0 1rem 0;
   color: #fff !important; box-shadow: 0 12px 40px rgba(15,110,86,0.22);
 }
-.gs-hero-brand {
-  color: #fff !important; font-size: 2.35rem; font-weight: 700;
+.gs-hero-brand,
+.gs-hero-brand * {
+  color: #ffffff !important; font-size: 2.35rem; font-weight: 800;
   letter-spacing: -0.045em; line-height: 1; margin: 0 0 0.45rem 0;
+  opacity: 1 !important; -webkit-text-fill-color: #ffffff !important;
 }
-.gs-hero h1 {
-  color: rgba(255,255,255,0.95) !important; font-size: 1.2rem; font-weight: 600;
+.gs-hero h1, .gs-hero h1 * {
+  color: #ffffff !important; font-size: 1.2rem; font-weight: 600;
   margin: 0 0 0.4rem 0; letter-spacing: -0.01em; line-height: 1.3;
+  opacity: 1 !important; -webkit-text-fill-color: #ffffff !important;
 }
-.gs-hero p { color: rgba(255,255,255,0.9) !important; margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.gs-hero p, .gs-hero p * {
+  color: #f0fdfa !important; margin: 0; font-size: 0.95rem; line-height: 1.45;
+  opacity: 1 !important; -webkit-text-fill-color: #f0fdfa !important;
+}
 .gs-insight-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
@@ -269,22 +285,32 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
   color: #e7ecf5 !important;
 }
 
-.gs-brand {
-  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.03em;
-  color: #5eead4 !important; margin-bottom: 0.2rem; line-height: 1.1;
+.gs-brand,
+.gs-brand * {
+  font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em;
+  color: #99f6e4 !important; margin-bottom: 0.2rem; line-height: 1.1;
+  opacity: 1 !important;
 }
-.gs-track { color: #a8b3c7 !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; }
+.gs-track, .gs-track * { color: #d5dceb !important; font-size: 0.86rem; line-height: 1.35; margin-bottom: 0.8rem; opacity: 1 !important; }
 .gs-topbar {
   display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.55rem 1rem;
-  margin: 0 0 0.85rem 0; padding-bottom: 0.7rem;
-  border-bottom: 1px solid rgba(255,255,255,0.10);
+  margin: 0 0 0.85rem 0; padding: 0.15rem 0 0.75rem 0;
+  border-bottom: 2px solid #5eead4;
 }
-.gs-topbar-name {
-  font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; line-height: 1;
-  color: #5eead4 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+.stApp .gs-topbar-name,
+.stApp .gs-topbar-name *,
+.gs-topbar-name,
+.gs-topbar-name * {
+  font-size: 2.15rem !important; font-weight: 800 !important; letter-spacing: -0.04em; line-height: 1.05;
+  color: #99f6e4 !important; font-family: "IBM Plex Sans", "Segoe UI", sans-serif !important;
+  opacity: 1 !important; -webkit-text-fill-color: #99f6e4 !important;
 }
-.gs-topbar-tag {
-  color: #a8b3c7 !important; font-size: 0.9rem; font-weight: 500;
+.stApp .gs-topbar-tag,
+.stApp .gs-topbar-tag *,
+.gs-topbar-tag,
+.gs-topbar-tag * {
+  color: #e7ecf5 !important; font-size: 0.95rem !important; font-weight: 600 !important;
+  opacity: 1 !important; -webkit-text-fill-color: #e7ecf5 !important;
 }
 .gs-kicker { color: #a8b3c7 !important; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.72rem; margin-bottom: 0.35rem; }
 .gs-badge {
@@ -325,15 +351,21 @@ div[data-baseweb="input"] > div, div[data-baseweb="select"] > div {
   color: #fff !important; border: 1px solid rgba(45,212,191,0.25);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35);
 }
-.gs-hero-brand {
-  color: #ecfeff !important; font-size: 2.35rem; font-weight: 700;
+.gs-hero-brand,
+.gs-hero-brand * {
+  color: #ffffff !important; font-size: 2.35rem; font-weight: 800;
   letter-spacing: -0.045em; line-height: 1; margin: 0 0 0.45rem 0;
+  opacity: 1 !important; -webkit-text-fill-color: #ffffff !important;
 }
-.gs-hero h1 {
-  color: rgba(236,254,255,0.95) !important; font-size: 1.2rem; font-weight: 600;
+.gs-hero h1, .gs-hero h1 * {
+  color: #ffffff !important; font-size: 1.2rem; font-weight: 600;
   margin: 0 0 0.4rem 0; letter-spacing: -0.01em; line-height: 1.3;
+  opacity: 1 !important; -webkit-text-fill-color: #ffffff !important;
 }
-.gs-hero p { color: rgba(236,254,255,0.88) !important; margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.gs-hero p, .gs-hero p * {
+  color: #ecfeff !important; margin: 0; font-size: 0.95rem; line-height: 1.45;
+  opacity: 1 !important; -webkit-text-fill-color: #ecfeff !important;
+}
 .gs-insight-grid {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 0.75rem; margin: 0.4rem 0 1.1rem 0;
