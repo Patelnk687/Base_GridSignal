@@ -37,9 +37,17 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 Placeholders until a demo capture is added:
 
-- `docs/images/overview.png` — stress, load, prices
-- `docs/images/anomaly.png` — evidence panel
-- `docs/images/battery.png` — strategy comparison
+- <img width="1532" height="686" alt="image" src="https://github.com/user-attachments/assets/b033e8fc-b756-4b6b-ba21-f0a1a4833dd0" />
+` — stress, load, prices
+
+- <img width="1538" height="688" alt="image" src="https://github.com/user-attachments/assets/8e20e757-68d2-474f-af6f-69dd77c1066b" />
+ — evidence panel
+ 
+- <img width="1727" height="862" alt="image" src="https://github.com/user-attachments/assets/8882f683-75e1-4896-a124-f6f47fef93dd" />
+ — strategy comparison
+
+ <img width="1767" height="987" alt="image" src="https://github.com/user-attachments/assets/601b937f-ef95-416c-8b09-7056565414bc" />
+https://basegridsignaltabreadme-ov-file-mobbixbp7vrkxx7jckakjd.streamlit.app/
 
 ## How the models work
 
